@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>>
+<head>
+  <meta charset="utf-8" />
+  <meta name="HandheldFriendly" content="True">
+  <link rel="shortcut icon" href="/favicon.svg">
+  <title>preact-sandbox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#fff">
+  <% for (var css in htmlWebpackPlugin.files.css) { %>
+    <link type="text/css" rel="stylesheet" href="/<%= htmlWebpackPlugin.files.css[css] %>" />
+  <% } %>
+
+</head>
+
+<body>
+<% if (htmlWebpackPlugin.options.appMountId) { %>
+<div id="<%= htmlWebpackPlugin.options.appMountId%>"></div>
+<% }
+if (htmlWebpackPlugin.options.appMountIds && htmlWebpackPlugin.options.appMountIds.length > 0) {
+  for (var index in htmlWebpackPlugin.options.appMountIds) { %>
+<div id="<%= htmlWebpackPlugin.options.appMountIds[index]%>"></div>
+<% }
+}
+
+if (htmlWebpackPlugin.options.window) { %>
+<script>
+  <% for (var varName in htmlWebpackPlugin.options.window) { %>
+    window['<%=varName%>'] = <%= JSON.stringify(htmlWebpackPlugin.options.window[varName]) %>;
+  <% } %>
+</script>
+<% } %>
+
+<% for (var chunk in htmlWebpackPlugin.files.chunks) { %><script type="text/javascript" src="/<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+<% } %>
+</body>
+</html>

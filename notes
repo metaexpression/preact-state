@@ -1,0 +1,49 @@
+// API: dispatch, useSubscription, useSelection, useDocument, useLocalDocument, subscribe
+
+// useData (useDeclaredState? useImmediateDocument? useDocument) is the same as a subscription,
+//   but it creates the data initially, similar to a declaration
+// tricky to implement correctly if it's expected to work between mount/unmounts, might have to assume the keys are never removed
+// or have another table of what objects are already created and match the initial version
+
+// useLocalDocument creates and subscribes to state which is removed on unmount with an effect
+// similar to useState, but with the benefit of being able
+
+// overview of the dispatch/update algorithm:
+//   - a query function is called manually, creating a read/write context, or dipatch creates one before calling multiple queries
+//   - the function is fired, each edit recording the id of the affected object, the key, and the old and new values
+//     while also performing the edits straight to the state array
+//   - selections in a read/write context are performed in full, no memoization or interaction
+//   - creations and deletions are recorded seperately
+//      - the key is overwritten if it's been modified previously in the same update cycle
+//   - now, all that's left is to efficiently trigger updates in subscriptions and components
+
+// more involved edit algorithm:
+//   - since query functions are pure, it's possible to have a cache of memoized selector results, and update them directly
+//      - after that, the inner function is called, and it uses the stale values without any actual searching, just quick lookups
+//   - this also means that prop updates which don't change every selection are faster
+//   - the state for this should be in the subscription data
+//   - write-context reads (edit) could make good use of the cache as well?
+//   !!! not as effective as I thought, because state updates can change other selections in the query, even if it's pure over the props
+//      - performance can still be possible though, by using an index of query parts to selectors, and a similar set-based algorithm as selection
+//      - global table of value queries -> selectors, functions -> selectors, and key queries -> selectors
+//      - might be necessary anyway, as part of the index
+
+// make a simpler key-value version of this, for lighter apps
+
+// subscriptions update when:
+//   - props change (triggered by hook)
+//   - state changes
+
+// outstanding problems:
+//   - component render ordering?
+//   - batching updates to avoid multiple renders?
+
+
+// alternative API:
+// change dispatch to groupUpdates
+// explode 'operations' into 4 seperate exported functions, make them all self-wrap in write contexts
+// no longer any need for methods on the objects
+
+// component local state:
+// this is basically the idea of the framework I had, using state and callbacks local to the component
+// along with ids to quickly select parts of the UI that need updates

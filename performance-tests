@@ -1,0 +1,7 @@
+simple search, one query (unindexed)
+10,000    items -> 65ms
+100,000   items -> 7,300ms
+
+indexed, one query
+10,000    items -> 0.33ms
+100,000   items -> 0.57ms
