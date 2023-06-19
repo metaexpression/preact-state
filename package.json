@@ -1,8 +1,8 @@
 {
-  "name": "preact-sandbox",
+  "name": "preact-state",
   "version": "0.1.0",
   "main": "index.js",
-  "author": "capybara",
+  "author": "metaexpression",
   "license": "GPL-3.0",
   "scripts": {
     "start": "webpack serve --mode development",
